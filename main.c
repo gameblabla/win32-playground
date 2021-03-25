@@ -41,15 +41,14 @@ uint8_t var1;
 void WinMainCRTStartup(VOID)
 {
 	MSG msg;
-	
 	/* It's set to 640x480 but actually, we will detect the screen resolution later (unless WINDOWED is set) */
-    g_hDC = GetDC(CreateWindow("STATIC", 0, 
-    #ifdef WINDOWED
-    WS_OVERLAPPED | WS_VISIBLE
-    #else
-    WS_POPUP | WS_VISIBLE | WS_MAXIMIZE
-    #endif
-    , 0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT + 25, 0, 0, 0, 0));
+	g_hDC = GetDC(CreateWindow("STATIC", 0, 
+	#ifdef WINDOWED
+	WS_OVERLAPPED | WS_VISIBLE,
+	#else
+	WS_POPUP | WS_VISIBLE | WS_MAXIMIZE,
+	#endif
+	0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT + 25, 0, 0, 0, 0));
 
 	#ifdef SIXTEEN_BPP
 	bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
