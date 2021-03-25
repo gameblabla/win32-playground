@@ -8,7 +8,7 @@ CFLAGS  += -Os -fno-PIC -fno-ident -fno-stack-protector -fomit-frame-pointer -fn
 CFLAGS  += -nostdlib -nodefaultlibs -nostartfiles
 CFLAGS += -Wl,-T,tinygccpe.scr
 
-LDFLAGS = -luser32 -lgdi32 -no-pie 
+LDFLAGS = -luser32 -lgdi32 -lkernel32 -no-pie 
 
 WINDRES = i686-w64-mingw32-windres
 
