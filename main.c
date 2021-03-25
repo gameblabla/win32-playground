@@ -55,21 +55,20 @@ void WinMainCRTStartup(VOID)
 		bi->bmiColors[var1].rgbBlue  = pal[(var1*3)+2];
 		bi->bmiColors[var1].rgbReserved = 0;
 	}
-			
+	
+	hDC = GetDC(window);
+	mdc = CreateCompatibleDC(hDC);
+	bitmap = CreateDIBSection(mdc, bi, DIB_RGB_COLORS, (VOID**)&lpBitmapBits, NULL, 0);
+	oldbmp = SelectObject(mdc, bitmap);	
 	do
 	{
-			hDC = GetDC(window);
-			mdc = CreateCompatibleDC(hDC);
-		
-			bitmap = CreateDIBSection(mdc, bi, DIB_RGB_COLORS, (VOID**)&lpBitmapBits, NULL, 0);
-			oldbmp = SelectObject(mdc, bitmap);
 			memcpy(lpBitmapBits, pict, pict_length);
 			BitBlt(hDC, 0, 0, INTERNAL_WINDOW_WIDTH, INTERNAL_WINDOW_HEIGHT, mdc, 0, 0, SRCCOPY);
-
-			SelectObject(mdc,oldbmp);  
-			DeleteDC(mdc);  
-			DeleteObject(bitmap);
 	} while(!GetAsyncKeyState(VK_ESCAPE));
+	
+	//SelectObject(mdc,oldbmp);  
+	//DeleteDC(mdc);  
+	//DeleteObject(bitmap);
 	
 	//HeapFree(GetProcessHeap(), 0, bi);
 }

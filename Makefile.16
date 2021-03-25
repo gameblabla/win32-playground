@@ -1,0 +1,32 @@
+.POSIX:
+CROSS   =
+CC      = i686-w64-mingw32-gcc
+STRIP = i686-w64-mingw32-strip
+CFLAGS  = -m32 -Wl,--subsystem=windows:3.10
+CFLAGS	+= -Wl,--dynamicbase -s
+CFLAGS  += -Os -fno-PIC -fno-ident -fno-stack-protector -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables -mpreferred-stack-boundary=2 -falign-functions=1 -falign-jumps=1 -falign-loops=1
+CFLAGS  += -nostdlib -nodefaultlibs -nostartfiles
+CFLAGS += -Wl,-T,tinygccpe.scr
+
+LDFLAGS = -luser32 -lgdi32 -no-pie 
+
+WINDRES = i686-w64-mingw32-windres
+
+EXECUTABLE = main16.exe
+ICO = myicon.ico
+
+C_FILES = main_16bpp.c
+# icon.o
+
+$(EXECUTABLE): $(C_FILES)
+	$(CC) $(CFLAGS) $(C_FILES) -o $(EXECUTABLE) $(LDFLAGS)
+	$(STRIP) --strip-all --remove-section=.comment --remove-section=.note $(EXECUTABLE)
+
+all: $(EXECUTABLE)
+
+#icon.o: $(ICO)
+#	echo '1 ICON "$(ICO)"' | $(WINDRES) -o $@
+
+clean:
+	rm -f $(EXECUTABLE)
+#icon.o
