@@ -25,6 +25,8 @@ static DEVMODE screenSettings = {
 };
 #endif
 
+uint8_t var1;
+
 void WinMainCRTStartup(VOID)
 {
 	HDC hDC, mdc;
@@ -32,8 +34,7 @@ void WinMainCRTStartup(VOID)
     HGDIOBJ oldbmp;
     unsigned char* lpBitmapBits;
 	BITMAPINFO* bi;
-	uint16_t index;
-
+	
     #ifdef FULLSCREEN
 	ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
 	#endif
@@ -45,13 +46,14 @@ void WinMainCRTStartup(VOID)
 	bi->bmiHeader.biHeight = -INTERNAL_WINDOW_HEIGHT;  //negative so (0,0) is at top left
 	bi->bmiHeader.biPlanes = 1;
 	bi->bmiHeader.biBitCount = 8;
-	bi->bmiHeader.biClrUsed	= 256;
-	for(index=0;index<256;index++)
+	/* 254 colors instead of 255 so we can fit it inside of an 8-bits char */
+	bi->bmiHeader.biClrUsed	= 255;
+	for(var1=0;var1<255;var1++)
 	{
-		bi->bmiColors[index].rgbRed   = pal[(index*3)+0];
-		bi->bmiColors[index].rgbGreen = pal[(index*3)+1];
-		bi->bmiColors[index].rgbBlue  = pal[(index*3)+2];
-		bi->bmiColors[index].rgbReserved = 0;
+		bi->bmiColors[var1].rgbRed   = pal[(var1*3)+0];
+		bi->bmiColors[var1].rgbGreen = pal[(var1*3)+1];
+		bi->bmiColors[var1].rgbBlue  = pal[(var1*3)+2];
+		bi->bmiColors[var1].rgbReserved = 0;
 	}
 			
 	do
@@ -59,7 +61,7 @@ void WinMainCRTStartup(VOID)
 			hDC = GetDC(window);
 			mdc = CreateCompatibleDC(hDC);
 		
-			bitmap = CreateDIBSection(mdc, bi, DIB_RGB_COLORS,  (VOID**)&lpBitmapBits, NULL, 0);
+			bitmap = CreateDIBSection(mdc, bi, DIB_RGB_COLORS, (VOID**)&lpBitmapBits, NULL, 0);
 			oldbmp = SelectObject(mdc, bitmap);
 			memcpy(lpBitmapBits, pict, pict_length);
 			BitBlt(hDC, 0, 0, INTERNAL_WINDOW_WIDTH, INTERNAL_WINDOW_HEIGHT, mdc, 0, 0, SRCCOPY);
@@ -69,6 +71,6 @@ void WinMainCRTStartup(VOID)
 			DeleteObject(bitmap);
 	} while(!GetAsyncKeyState(VK_ESCAPE));
 	
-	HeapFree(GetProcessHeap(), 0, bi);
+	//HeapFree(GetProcessHeap(), 0, bi);
 }
 
